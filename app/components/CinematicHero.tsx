@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from "react";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const TOTAL_FRAMES = 152;
@@ -8,7 +8,7 @@ const TOTAL_FRAMES = 152;
 const SCROLL_HEIGHT_VH = 700;
 
 /** Zero-pad a number to 3 digits */
-const padFrame = (n: number): string => String(n).padStart(3, '0');
+const padFrame = (n: number): string => String(n).padStart(3, "0");
 
 /** Generate the public path for a given 1-indexed frame */
 const framePath = (n: number): string =>
@@ -16,7 +16,7 @@ const framePath = (n: number): string =>
 
 export default function CinematicHero() {
   // ─── DOM Refs ───────────────────────────────────────────────────────────────
-  const scrollTrackRef = useRef<HTMLDivElement>(null);  // tall div = scroll distance
+  const scrollTrackRef = useRef<HTMLDivElement>(null); // tall div = scroll distance
   const canvasWrapperRef = useRef<HTMLDivElement>(null); // dolly zoom target
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -39,7 +39,7 @@ export default function CinematicHero() {
   const drawFrame = useCallback((index: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const img = imagesRef.current[index];
     if (!img || !img.complete || img.naturalWidth === 0) return;
@@ -50,7 +50,10 @@ export default function CinematicHero() {
     // Object-Fit: Cover math
     const imgAspect = img.naturalWidth / img.naturalHeight;
     const canvasAspect = cW / cH;
-    let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+    let sx = 0,
+      sy = 0,
+      sw = img.naturalWidth,
+      sh = img.naturalHeight;
 
     if (imgAspect > canvasAspect) {
       sw = img.naturalHeight * canvasAspect;
@@ -73,7 +76,7 @@ export default function CinematicHero() {
     canvas.height = window.innerHeight * dpr;
     canvas.style.width = `${window.innerWidth}px`;
     canvas.style.height = `${window.innerHeight}px`;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (ctx) ctx.imageSmoothingEnabled = true;
     if (currentFrameRef.current >= 0) drawFrame(currentFrameRef.current);
   }, [drawFrame]);
@@ -98,7 +101,7 @@ export default function CinematicHero() {
     // Frame scrubbing
     const targetFrame = Math.min(
       Math.floor(progress * (TOTAL_FRAMES - 1)),
-      TOTAL_FRAMES - 1
+      TOTAL_FRAMES - 1,
     );
     if (targetFrame !== currentFrameRef.current) {
       currentFrameRef.current = targetFrame;
@@ -145,19 +148,19 @@ export default function CinematicHero() {
     const cards = cardsRef.current;
     if (cards) {
       if (progress < 0.6) {
-        cards.style.opacity = '0';
-        cards.style.pointerEvents = 'none';
+        cards.style.opacity = "0";
+        cards.style.pointerEvents = "none";
         // reset card positions
-        cards.querySelectorAll<HTMLElement>('.trust-card').forEach(c => {
-          c.style.transform = 'translateY(60px)';
-          c.style.opacity = '0';
+        cards.querySelectorAll<HTMLElement>(".trust-card").forEach((c) => {
+          c.style.transform = "translateY(60px)";
+          c.style.opacity = "0";
         });
       } else if (progress <= 0.9) {
         const t = (progress - 0.6) / 0.25;
         const eased = 1 - Math.pow(1 - t, 3); // ease-out-cubic
-        cards.style.opacity = '1';
-        cards.style.pointerEvents = 'auto';
-        cards.querySelectorAll<HTMLElement>('.trust-card').forEach((c, i) => {
+        cards.style.opacity = "1";
+        cards.style.pointerEvents = "auto";
+        cards.querySelectorAll<HTMLElement>(".trust-card").forEach((c, i) => {
           const delay = i * 0.12;
           const cardT = Math.min(Math.max((t - delay) / (1 - delay), 0), 1);
           const cardEased = 1 - Math.pow(1 - cardT, 3);
@@ -186,13 +189,13 @@ export default function CinematicHero() {
     // Run first tick to set initial overlay states
     onScrollTick();
     // Start listening
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
   }, [drawFrame, onScrollTick, onScroll]);
 
   // ─── Image Preloading ──────────────────────────────────────────────────────
   useEffect(() => {
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
 
     const images: HTMLImageElement[] = new Array(TOTAL_FRAMES);
     imagesRef.current = images;
@@ -201,7 +204,8 @@ export default function CinematicHero() {
       loadedCountRef.current += 1;
       const pct = Math.round((loadedCountRef.current / TOTAL_FRAMES) * 100);
       if (loadingBarRef.current) loadingBarRef.current.style.width = `${pct}%`;
-      if (loadingTextRef.current) loadingTextRef.current.textContent = `${pct}%`;
+      if (loadingTextRef.current)
+        loadingTextRef.current.textContent = `${pct}%`;
 
       if (loadedCountRef.current === TOTAL_FRAMES) {
         setTimeout(() => {
@@ -220,8 +224,8 @@ export default function CinematicHero() {
     }
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("scroll", onScroll);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
   }, [resizeCanvas, initAnimation, onScroll]);
@@ -229,7 +233,7 @@ export default function CinematicHero() {
   return (
     <>
       {/* ── Loading Screen ──────────────────────────────────────────────── */}
-      <div className={`loading-screen${isLoaded ? ' hidden' : ''}`}>
+      <div className={`loading-screen${isLoaded ? " hidden" : ""}`}>
         <div className="loading-logo">NEXORA</div>
         <div className="loading-bar-track">
           <div ref={loadingBarRef} className="loading-bar-fill" />
@@ -245,7 +249,7 @@ export default function CinematicHero() {
         <div
           ref={canvasWrapperRef}
           className="canvas-wrapper"
-          style={{ transform: 'scale(1.12)', transformOrigin: 'center center' }}
+          style={{ transform: "scale(1.12)", transformOrigin: "center center" }}
         >
           <canvas ref={canvasRef} id="heroCanvas" />
         </div>
@@ -254,10 +258,20 @@ export default function CinematicHero() {
         <nav ref={navbarRef} className="navbar">
           <div className="navbar-logo">NEXORA</div>
           <ul className="navbar-links">
-            <li><a href="#platform">Platform</a></li>
-            <li><a href="#trust">Trust Engine</a></li>
-            <li><a href="#docs">Docs</a></li>
-            <li><a href="#get-started" className="navbar-cta">Get Started</a></li>
+            <li>
+              <a href="#platform">Platform</a>
+            </li>
+            <li>
+              <a href="#trust">Trust Engine</a>
+            </li>
+            <li>
+              <a href="#docs">Docs</a>
+            </li>
+            <li>
+              <a href="#get-started" className="navbar-cta">
+                Get Started
+              </a>
+            </li>
           </ul>
         </nav>
 
@@ -265,15 +279,17 @@ export default function CinematicHero() {
         <div
           ref={headerRef}
           className="hero-header header"
-          style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
+          style={{ perspective: "1000px", transformStyle: "preserve-3d" }}
         >
           <div className="hero-eyebrow">
             <span className="hero-eyebrow-dot" />
             Autonomous Trust Engine
           </div>
           <h1 className="hero-title">
-            The AI That<br />
-            <span className="gradient-text">Knows Who</span><br />
+            The AI That
+            <br />
+            Knows Who
+            <br />
             To Trust
           </h1>
           <p className="hero-subtitle">
@@ -288,7 +304,10 @@ export default function CinematicHero() {
           className="trust-cards-container"
           style={{ opacity: 0 }}
         >
-          <div className="trust-card" style={{ transform: 'translateY(60px)', opacity: 0 }}>
+          <div
+            className="trust-card"
+            style={{ transform: "translateY(60px)", opacity: 0 }}
+          >
             <div className="trust-card-icon purple">🛡️</div>
             <div className="trust-card-title">Trust Graph</div>
             <div className="trust-card-desc">
@@ -296,7 +315,10 @@ export default function CinematicHero() {
             </div>
             <div className="trust-card-metric">99.8%</div>
           </div>
-          <div className="trust-card" style={{ transform: 'translateY(60px)', opacity: 0 }}>
+          <div
+            className="trust-card"
+            style={{ transform: "translateY(60px)", opacity: 0 }}
+          >
             <div className="trust-card-icon blue">⚡</div>
             <div className="trust-card-title">Zero-Latency Detection</div>
             <div className="trust-card-desc">
@@ -304,7 +326,10 @@ export default function CinematicHero() {
             </div>
             <div className="trust-card-metric">&lt;12ms</div>
           </div>
-          <div className="trust-card" style={{ transform: 'translateY(60px)', opacity: 0 }}>
+          <div
+            className="trust-card"
+            style={{ transform: "translateY(60px)", opacity: 0 }}
+          >
             <div className="trust-card-icon pink">🔮</div>
             <div className="trust-card-title">Predictive Risk Score</div>
             <div className="trust-card-desc">
@@ -333,7 +358,13 @@ export default function CinematicHero() {
 
       {/* ── After-Hero content ───────────────────────────────────────────── */}
       <section className="after-hero" id="platform">
-        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.875rem', textAlign: 'center' }}>
+        <p
+          style={{
+            color: "rgba(255,255,255,0.3)",
+            fontSize: "0.875rem",
+            textAlign: "center",
+          }}
+        >
           ↓ &nbsp;Content continues below the cinematic sequence
         </p>
       </section>

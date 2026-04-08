@@ -3,8 +3,8 @@
 :root {
   --background: #050505;
   --foreground: #ffffff;
-  --fg: #ffffff !important;
-  --bg: #050505 !important;
+  --fg: #111111 !important;
+  --bg: #ffffff !important;
   --accent: #6366f1;
   --accent-glow: rgba(99, 102, 241, 0.4);
   --glass-bg: rgba(255, 255, 255, 0.05);
@@ -119,10 +119,7 @@ a {
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #111111;
 }
 
 .navbar-links {
@@ -135,29 +132,29 @@ a {
 .navbar-links a {
   font-size: 0.875rem;
   font-weight: 450;
-  color: rgba(255,255,255,0.65);
+  color: #111111;
+  opacity: 1;
   letter-spacing: 0.01em;
-  transition: color 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .navbar-links a:hover {
-  color: rgba(255,255,255,1);
+  opacity: 0.7;
 }
 
 .navbar-cta {
   padding: 8px 20px;
   border-radius: 6px;
-  background: rgba(99,102,241,0.15);
-  border: 1px solid rgba(99,102,241,0.4);
+  background-color: #111111;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #a5b4fc !important;
-  transition: background 0.2s ease, border-color 0.2s ease !important;
+  color: #ffffff !important;
+  border: 1px solid #111111;
+  transition: opacity 0.2s ease !important;
 }
 
 .navbar-cta:hover {
-  background: rgba(99,102,241,0.3) !important;
-  border-color: rgba(99,102,241,0.7) !important;
+  opacity: 0.8 !important;
 }
 
 /* ── Fixed Hero Layer ──────────────────────────────────────────────────────
@@ -213,66 +210,50 @@ canvas#heroCanvas {
   z-index: 10;
 }
 
-.hero-eyebrow {
+.hero-eyebrow, .header p:first-child, .header .badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background: rgba(99,102,241,0.15);
-  border: 1px solid rgba(99,102,241,0.35);
-  font-size: 0.7rem;
+  background: rgba(0, 0, 0, 0.05);
+  color: #111111;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #a5b4fc;
   margin-bottom: 28px;
-  backdrop-filter: blur(8px);
 }
 
 .hero-eyebrow-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #6366f1;
-  box-shadow: 0 0 8px #6366f1;
-  animation: pulse-dot 2s ease-in-out infinite;
+  display: none;
 }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+/* Clean SaaS typography */
+.header {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-/* Ensure H1 inherits the premium look */
 .header h1, .hero-title {
   font-family: "Host Grotesk", sans-serif;
-  font-size: clamp(3rem, 7vw, 7rem);
-  font-weight: 800 !important;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: #ffffff !important;
+  font-size: 3rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #111111 !important;
   margin-bottom: 24px;
-  max-width: 900px;
-}
-
-/* Specific Gradient utility - STRICTLY NO GLOW */
-.gradient-text {
-  background: linear-gradient(90deg, #7B8CFF, #A855F7) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  color: transparent !important;
-  text-shadow: none !important;
-  box-shadow: none !important;
 }
 
 /* Update paragraph text */
 .header p, .hero-subtitle {
   font-size: clamp(1rem, 1.5vw, 1.25rem);
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
   max-width: 560px;
+  margin: 0 auto;
   line-height: 1.6;
   letter-spacing: 0.01em;
 }
