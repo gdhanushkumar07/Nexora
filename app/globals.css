@@ -1,0 +1,396 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --background: #050505;
+  --foreground: #ffffff;
+  --fg: #ffffff !important;
+  --bg: #050505 !important;
+  --accent: #6366f1;
+  --accent-glow: rgba(99, 102, 241, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --font-primary: 'Space Grotesk', 'Inter', sans-serif;
+  --font-secondary: 'Inter', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+  scroll-behavior: auto; /* Lenis handles smooth scroll */
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  font-family: var(--font-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Loading Screen */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-logo {
+  font-family: var(--font-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff 0%, #6366f1 50%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loading-bar-track {
+  width: 240px;
+  height: 2px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  border-radius: 9999px;
+  width: 0%;
+  transition: width 0.15s ease;
+}
+
+.loading-text {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  will-change: opacity;
+}
+
+.navbar-logo {
+  font-family: var(--font-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+}
+
+.navbar-links a {
+  font-size: 0.875rem;
+  font-weight: 450;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 0.01em;
+  transition: color 0.2s ease;
+}
+
+.navbar-links a:hover {
+  color: rgba(255,255,255,1);
+}
+
+.navbar-cta {
+  padding: 8px 20px;
+  border-radius: 6px;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.4);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #a5b4fc !important;
+  transition: background 0.2s ease, border-color 0.2s ease !important;
+}
+
+.navbar-cta:hover {
+  background: rgba(99,102,241,0.3) !important;
+  border-color: rgba(99,102,241,0.7) !important;
+}
+
+/* ── Fixed Hero Layer ──────────────────────────────────────────────────────
+   The hero-fixed-layer is permanently fixed to the viewport for the entire
+   cinematic sequence. The tall .scroll-track div below it creates the scroll
+   distance. Once the user has scrolled past .scroll-track, this layer is
+   hidden by the .after-hero section that stacks on top of it.
+────────────────────────────────────────────────────────────────────────── */
+.hero-fixed-layer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Scroll track: invisible tall div that creates the scroll distance */
+.scroll-track {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Canvas wrapper for dolly zoom */
+.canvas-wrapper {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+canvas#heroCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Hero Header Content */
+.hero-header {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 24px;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.35);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  margin-bottom: 28px;
+  backdrop-filter: blur(8px);
+}
+
+.hero-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  box-shadow: 0 0 8px #6366f1;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Ensure H1 inherits the premium look */
+.header h1, .hero-title {
+  font-family: "Host Grotesk", sans-serif;
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-weight: 800 !important;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #ffffff !important;
+  margin-bottom: 24px;
+  max-width: 900px;
+}
+
+/* Specific Gradient utility - STRICTLY NO GLOW */
+.gradient-text {
+  background: linear-gradient(90deg, #7B8CFF, #A855F7) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Update paragraph text */
+.header p, .hero-subtitle {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7) !important;
+  max-width: 560px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+/* Trust Cards (UI Reveal) */
+.trust-cards-container {
+  position: absolute;
+  bottom: 80px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 40px;
+  z-index: 10;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.trust-card {
+  flex: 1;
+  max-width: 320px;
+  padding: 20px 24px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+  will-change: transform, opacity;
+}
+
+.trust-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  font-size: 1.1rem;
+}
+
+.trust-card-icon.purple { background: rgba(99,102,241,0.2); }
+.trust-card-icon.blue { background: rgba(59,130,246,0.2); }
+.trust-card-icon.pink { background: rgba(168,85,247,0.2); }
+
+.trust-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.trust-card-desc {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.5;
+}
+
+.trust-card-metric {
+  margin-top: 14px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #a5b4fc, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Progress indicator */
+.scroll-progress {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  will-change: opacity;
+}
+
+.scroll-progress-line {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(180deg, #6366f1, #a855f7);
+  height: 0%;
+  transition: none;
+}
+
+.scroll-progress-text {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+}
+
+/* Section after hero */
+.after-hero {
+  background: #000;
+  padding: 120px 48px;
+  position: relative;
+  z-index: 2;
+}
