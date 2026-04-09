@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const TOTAL_FRAMES = 152;
@@ -21,11 +23,44 @@ export default function CinematicHero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const navbarRef = useRef<HTMLElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
   const scrollProgressFillRef = useRef<HTMLDivElement>(null);
   const scrollProgressRef = useRef<HTMLDivElement>(null);
   const loadingBarRef = useRef<HTMLDivElement>(null);
   const loadingTextRef = useRef<HTMLSpanElement>(null);
+
+  // ─── Native Data Array (Stacking Narrative) ────────────────────────────────
+  const NARRATIVE = [
+    {
+      prefix: "01",
+      title: "Trust Graph",
+      bg: "#E3D5FF",
+      items: [
+        "Real-time relationship mapping",
+        "Network topological correlation",
+        "Identity graph clustering",
+      ]
+    },
+    {
+      prefix: "02",
+      title: "Detection",
+      bg: "#FFFDCF",
+      items: [
+        "Zero-Latency processing edge",
+        "Sub-12ms anomaly routing",
+        "Distributed threat intelligence",
+      ]
+    },
+    {
+      prefix: "03",
+      title: "Risk Engine",
+      bg: "#F4F4F5",
+      items: [
+        "Explainable confidence bands",
+        "Forward-looking predictive modeling",
+        "Actionable resolution paths",
+      ]
+    }
+  ];
 
   // ─── State & Internal Refs ─────────────────────────────────────────────────
   const imagesRef = useRef<HTMLImageElement[]>([]);
@@ -143,36 +178,6 @@ export default function CinematicHero() {
       const scale = 1.12 - 0.12 * t;
       wrapper.style.transform = `scale(${scale})`;
     }
-
-    // ── Trust Cards reveal: 60→85%, fade out 90→100% ────────────────────────
-    const cards = cardsRef.current;
-    if (cards) {
-      if (progress < 0.6) {
-        cards.style.opacity = "0";
-        cards.style.pointerEvents = "none";
-        // reset card positions
-        cards.querySelectorAll<HTMLElement>(".trust-card").forEach((c) => {
-          c.style.transform = "translateY(60px)";
-          c.style.opacity = "0";
-        });
-      } else if (progress <= 0.9) {
-        const t = (progress - 0.6) / 0.25;
-        const eased = 1 - Math.pow(1 - t, 3); // ease-out-cubic
-        cards.style.opacity = "1";
-        cards.style.pointerEvents = "auto";
-        cards.querySelectorAll<HTMLElement>(".trust-card").forEach((c, i) => {
-          const delay = i * 0.12;
-          const cardT = Math.min(Math.max((t - delay) / (1 - delay), 0), 1);
-          const cardEased = 1 - Math.pow(1 - cardT, 3);
-          c.style.transform = `translateY(${60 * (1 - cardEased)}px)`;
-          c.style.opacity = String(cardEased);
-        });
-      } else {
-        // Fade out 90→100%
-        const t = (progress - 0.9) / 0.1;
-        cards.style.opacity = String(1 - t);
-      }
-    }
   }, [drawFrame, getScrollProgress]);
 
   // ─── Scroll listener (schedules RAF) ──────────────────────────────────────
@@ -230,6 +235,50 @@ export default function CinematicHero() {
     };
   }, [resizeCanvas, initAnimation, onScroll]);
 
+  // ─── GSAP Stacking Engine ──────────────────────────────────────────────────
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Timeout ensures DOM is fully painted after load before calculating offsets
+      const ctx = gsap.context(() => {
+        const stackCards = gsap.utils.toArray<HTMLElement>(".stack-card");
+
+        stackCards.forEach((card, index) => {
+          const isLastCard = index === stackCards.length - 1;
+
+          // 1. Pin the card
+          ScrollTrigger.create({
+            trigger: card,
+            start: "top top",
+            pin: true,
+            pinSpacing: false,
+            id: `stack-${index}`,
+          });
+
+          // 2. Parallax fade down when next card covers it
+          if (!isLastCard) {
+            gsap.to(card, {
+              yPercent: -20,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top top",
+                endTrigger: stackCards[index + 1],
+                end: "top top",
+                scrub: true,
+              },
+            });
+          }
+        });
+        
+        ScrollTrigger.refresh();
+      });
+
+      return () => ctx.revert(); // Cleanup GSAP hooks
+    }
+  }, [isLoaded]);
+
   return (
     <>
       {/* ── Loading Screen ──────────────────────────────────────────────── */}
@@ -259,13 +308,13 @@ export default function CinematicHero() {
           <div className="navbar-logo">NEXORA</div>
           <ul className="navbar-links">
             <li>
-              <a href="#platform">Platform</a>
+              <a href="#features">Features</a>
             </li>
             <li>
-              <a href="#trust">Trust Engine</a>
+              <a href="#howitworks">How it works</a>
             </li>
             <li>
-              <a href="#docs">Docs</a>
+              <a href="#techstack">Tech stack</a>
             </li>
             <li>
               <a href="#get-started" className="navbar-cta">
@@ -298,47 +347,6 @@ export default function CinematicHero() {
           </p>
         </div>
 
-        {/* Trust Cards */}
-        <div
-          ref={cardsRef}
-          className="trust-cards-container"
-          style={{ opacity: 0 }}
-        >
-          <div
-            className="trust-card"
-            style={{ transform: "translateY(60px)", opacity: 0 }}
-          >
-            <div className="trust-card-icon purple">🛡️</div>
-            <div className="trust-card-title">Trust Graph</div>
-            <div className="trust-card-desc">
-              Real-time relationship mapping across every node in your network.
-            </div>
-            <div className="trust-card-metric">99.8%</div>
-          </div>
-          <div
-            className="trust-card"
-            style={{ transform: "translateY(60px)", opacity: 0 }}
-          >
-            <div className="trust-card-icon blue">⚡</div>
-            <div className="trust-card-title">Zero-Latency Detection</div>
-            <div className="trust-card-desc">
-              Anomaly signals processed in under 12ms via edge inference.
-            </div>
-            <div className="trust-card-metric">&lt;12ms</div>
-          </div>
-          <div
-            className="trust-card"
-            style={{ transform: "translateY(60px)", opacity: 0 }}
-          >
-            <div className="trust-card-icon pink">🔮</div>
-            <div className="trust-card-title">Predictive Risk Score</div>
-            <div className="trust-card-desc">
-              Forward-looking threat scoring with explainable confidence bands.
-            </div>
-            <div className="trust-card-metric">4.2× safer</div>
-          </div>
-        </div>
-
         {/* Scroll Progress Indicator */}
         <div ref={scrollProgressRef} className="scroll-progress">
           <div className="scroll-progress-line">
@@ -356,17 +364,35 @@ export default function CinematicHero() {
         aria-hidden="true"
       />
 
-      {/* ── After-Hero content ───────────────────────────────────────────── */}
-      <section className="after-hero" id="platform">
-        <p
-          style={{
-            color: "rgba(255,255,255,0.3)",
-            fontSize: "0.875rem",
-            textAlign: "center",
-          }}
-        >
-          ↓ &nbsp;Content continues below the cinematic sequence
-        </p>
+      {/* ── Stacking Narrative Section ───────────────────────────────────── */}
+      <section className="stack-container">
+        {NARRATIVE.map((card, i) => (
+          <div
+            key={i}
+            className="stack-card"
+            style={{ backgroundColor: card.bg, zIndex: i + 10 }}
+          >
+            <div className="stack-inner">
+              <div className="stack-left">
+                <span className="stack-index">{card.prefix}</span>
+                <h2 className="stack-title">{card.title}</h2>
+              </div>
+              <div className="stack-right">
+                <ul className="stack-list">
+                  {card.items.map((item, idx) => (
+                    <li key={idx}>— {item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* ── Final Reveal CTA ──────────────────────────────────────────────── */}
+      <section className="final-reveal">
+        <h1>Join teams building faster with Nexora.</h1>
+        <button className="navbar-cta" style={{ marginTop: '32px', padding: '16px 32px', fontSize: '1rem' }}>Get Started Today</button>
       </section>
     </>
   );

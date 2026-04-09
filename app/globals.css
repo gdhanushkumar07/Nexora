@@ -258,74 +258,91 @@ canvas#heroCanvas {
   letter-spacing: 0.01em;
 }
 
-/* Trust Cards (UI Reveal) */
-.trust-cards-container {
-  position: absolute;
-  bottom: 80px;
-  left: 0;
-  right: 0;
+/* ── Stacking Narrative GSAP Engine ────────────────────────────────────────── */
+.stack-container {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 20px;
-  padding: 0 40px;
-  z-index: 10;
-  will-change: transform, opacity;
-  pointer-events: none;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  z-index: 5;
 }
 
-.trust-card {
-  flex: 1;
-  max-width: 320px;
-  padding: 20px 24px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
-  will-change: transform, opacity;
-}
-
-.trust-card-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+.stack-card {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
-  font-size: 1.1rem;
 }
 
-.trust-card-icon.purple { background: rgba(99,102,241,0.2); }
-.trust-card-icon.blue { background: rgba(59,130,246,0.2); }
-.trust-card-icon.pink { background: rgba(168,85,247,0.2); }
-
-.trust-card-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: rgba(255,255,255,0.9);
-  margin-bottom: 6px;
-  letter-spacing: -0.01em;
+.stack-inner {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
 }
 
-.trust-card-desc {
-  font-size: 0.78rem;
-  font-weight: 400;
-  color: rgba(255,255,255,0.4);
-  line-height: 1.5;
+.stack-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.trust-card-metric {
-  margin-top: 14px;
-  font-size: 1.5rem;
+.stack-index {
+  font-family: var(--font-primary, "Space Grotesk", sans-serif);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #a5b4fc, #c084fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 1.5rem;
+  color: rgba(17, 24, 39, 0.4);
+  margin-bottom: 24px;
+}
+
+.stack-title {
+  font-size: clamp(4rem, 10vw, 10rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: #111827;
+  max-width: 800px;
+  font-family: "Host Grotesk", sans-serif;
+}
+
+.stack-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 80px;
+}
+
+.stack-list {
+  list-style: none;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 400px;
+}
+
+.stack-list li {
+  line-height: 1.4;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.1);
+  padding-bottom: 24px;
+}
+
+.stack-list li:last-child {
+  border-bottom: none;
+}
+
+.hero {
+  position: relative;
+  height: 120vh;
+  overflow: hidden;
 }
 
 /* Progress indicator */
@@ -368,10 +385,26 @@ canvas#heroCanvas {
   text-transform: uppercase;
 }
 
-/* Section after hero */
-.after-hero {
-  background: #000;
-  padding: 120px 48px;
+.after-hero, .final-section, .final-reveal {
+  background: #f5f5f4;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  z-index: 2;
+  z-index: 100;
+  margin: 0;
+  padding: 0;
+}
+
+.after-hero p, .final-section h1, .final-reveal h1 {
+  font-size: 2rem !important;
+  font-weight: 500 !important;
+  color: #111827 !important;
+}
+
+.outro {
+  margin: 0;
+  padding: 0;
 }
